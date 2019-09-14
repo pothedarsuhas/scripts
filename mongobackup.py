@@ -1,13 +1,13 @@
 '''
 uri example
-    'mongodb://green:cyphercrypt123@dev.cyphercrypttech.com:27017/?authSource=green_crackers'
+    'mongodb://<username>:<password>@<hostnameorip>:27017/?authSource=<dbname>'
 
 outputDir example
     '/backups/mongo/'
 
 basis for this script
-    'mongodump --host dev.cyphercrypttech.com --port 27017 --username green
-    --password cyphercrypt123 --db green_crackers --out /Users/suhaspothedar/backup/'
+    'mongodump --host <hostname/ip> --port 27017 --username <username>
+    --password <********> --db green_crackers --out <backupDir>'
 
 syntax to use this script 
     python mongobackup.py <uri> <outputDir>

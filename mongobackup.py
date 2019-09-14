@@ -1,16 +1,30 @@
 '''
+requirements
+- pymongo
+- mongoclient
+
 uri example
     'mongodb://<username>:<password>@<hostnameorip>:27017/?authSource=<dbname>'
 
-outputDir example
-    '/backups/mongo/'
+example uri 
+> mongodb://username:password@hostname or ip:port/?authSource=backenddb 
+
+example outputDir
+> /backups/mongo/
 
 basis for this script
     'mongodump --host <hostname/ip> --port 27017 --username <username>
     --password <********> --db green_crackers --out <backupDir>'
 
-syntax to use this script 
-    python mongobackup.py <uri> <outputDir>
+basis
+> mongodump --host <hostname or ip> --port <port> --username <username> --password <password> --db <databasename> --out <outputDir>
+
+
+syntax 
+> python mongobackup.py <uri> <outputDir>
+
+example
+> python mongobackup.py mongodb://<username>:<password>@<hostnameorip>:27017/?authSource=<dbname> /backups/mongo/
 '''
 
 from pymongo import MongoClient

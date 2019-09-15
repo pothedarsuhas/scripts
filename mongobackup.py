@@ -1,7 +1,6 @@
 '''
 requirements
-- pymongo
-- mongoclient
+- mongoclient installed on your system
 
 uri example
     'mongodb://<username>:<password>@<hostnameorip>:27017/?authSource=<dbname>'
@@ -24,7 +23,7 @@ syntax
 > python mongobackup.py <uri> <outputDir>
 
 example
-> python mongobackup.py mongodb://<username>:<password>@<hostnameorip>:27017/?authSource=<dbname> /backups/mongo/
+> python mongobackup.py mongodb://<username>:<password>@<hostnameorip>:27017 /backups/mongo/
 '''
 
 import os
@@ -32,7 +31,7 @@ import time
 import sys
 
 # configs:
-interval_m = 1
+interval_m = 60
 uri = sys.argv[1]
 outputs_dir = sys.argv[2]
 

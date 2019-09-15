@@ -20,7 +20,7 @@ basis
 
 
 syntax 
-> python mongobackup.py <uri> <outputDir>
+> python mongobackup.py <uri> <outputDir> &
 
 example
 > python mongobackup.py mongodb://<username>:<password>@<hostnameorip>:27017 /backups/mongo/

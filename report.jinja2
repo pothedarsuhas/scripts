@@ -1,0 +1,7 @@
+Hostname,  thp, scheduler, rsyslog, snmpd, oracle_account, noexec, crontab, 
+{% for host in groups[ "web" ] %}
+{% if {{oracle_account.stat.exists}} is defined %}
+{{ ansible_hostname }}, {{ thp.stdout }}, {{ scheduler.stdout }}, {{ rsyslog.stdout }}, {{snmpd.stdout}}, {{oracle_account.stdout}}, {{noexec.stdout}}, {{ crontab.stdout }}
+{% else %}
+{{ ansible_hostname }}, {{ thp.stdout }}, {{ scheduler.stdout }}, {{ rsyslog.stdout }}, {{snmpd.stdout}}, no oracle,  {{noexec.stdout}}, {{ crontab.stdout }}
+{% endfor %}

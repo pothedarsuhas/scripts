@@ -1,0 +1,45 @@
+---
+- name: "checking requirements"
+  hosts: all
+  tasks:
+  - name: check if thp is enabled
+    shell: cat /sys/kernel/mm/redhat_transparent_hugepage/enabled 
+    register: thp
+
+  - name: check if scheduler set to deadline
+    shell: cat /sys/block/hda/queue/scheduler 
+    register: scheduler
+
+  - name: collect all service facts
+    service_facts:
+    register: services_state
+
+  - name: check if rsyslog.service is enabled
+    shell: echo {{ services_state.ansible_facts.services['rsyslog.service'].state }}
+    register: rsyslog
+
+  - name: check if snmpd.service is enabled
+    shell: echo {{ services_state.ansible_facts.services['snmpd.service'].state }}
+    register: snmpd
+
+  - name: check if oracle account status is non expiring
+    shell: chage -1 {{ oracle_user }}     # set the username in vars
+    register: oracle_account
+    ignore_errors: yes
+
+  - name: verify if noexec flag on /tmp is not set
+    shell: mount | grep noexec 
+    register: noexec
+
+  - name: check if crontab is running
+    shell: echo {{ services_state.ansible_facts.services['crond.service'].state }}
+    register: cron
+
+  - name: Generate Linux release Spreadsheet
+    template:
+      src: report.jinja2
+      dest: report.csv
+    delegate_to: localhost
+    become: false
+    run_once: true
+...

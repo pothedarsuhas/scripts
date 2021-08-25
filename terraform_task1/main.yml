@@ -1,0 +1,100 @@
+# 1. go to redneck 10.181.0.30 from dc25 jump host 10.47.13.2  #script should be executed from the jump host
+# 2. Terraform 0.12 will be installed already # check if terraform 0.12 is installed else install it or exit
+#    check with terraform --version and look for version 0.12
+# 3. Terraform init
+#    a. mkdir /automation/terraform/<YOUR_WORKING_DIR_NAME> && cd /automation/terraform/<YOUR_WORKING_DIR_NAME>
+#    b. git clone <AUTOMATION_LAB_URL> but before cloning git init
+#    c. git clone <MODULES_URL>
+#    d. change working directory for testing, before that check if windowd or linux using "ansible_os_family" 
+#       and check if the directory is present, if not create it
+#       if linux
+#       cwd <TESTING_WORKING_DIRECTORY_LINUX>
+#       else if windows
+#       csd <TESTING_WORKING_DIRECTORY_WINDOWS>
+#    e. terrraform init --backend-config=<BACKEND_CONFIG_DIR> dont do this way
+#       do it this way
+      # terraform init --backend-config="user_name=<USER_NAME>" \
+      # --backend-config="PASSWORD=<PASSWORD>" \
+      # --backend-config="auth_url=https://identity-3.<CC_REGION>.cloud.sap/v3" \
+      # --backend-config="container=<TF_STATE_CONTAINER_NAME>-tfstate" \
+      # --backend-config="tenant_name=<TENANT_NAME>" \
+      # --backend-config="domain_name=<DOMAIN_NAME>" 
+# 4. Terraform plan
+#    terraform plan --var-file=<TERRAFORM_VARS_FILENAME>
+# 5. Terraform apply
+#    terraform apply --var-file=<TERRAFORM_VARS_FILENAME>
+
+---
+- name: checking if terraform v0.12 is installed
+  shell: terraform --version | grep 0.11 | awk '{print $2}'
+  register: check_terraform_version
+  fail: msg="Terraform v0.12 does not exist"
+  when: '"v0.12" not in check_terraform_version'
+
+- name: making a working directory for terraform
+  file:
+    path: {{ YOUR_WORKING_DIR_NAME }}
+    state: directory
+    mode: '0755'
+- name: going inside the working directory
+  command: chdir= {{ YOUR_WORKING_DIR_NAME }}
+
+- name: check if git is installed
+  shell: terraform --version | grep "git version" 
+  register: check_git_installed
+  fail: msg="git does not exist"
+  when: '"git version" not in check_git_installed'
+
+- name: initialising git
+  shell: git init
+
+- name: cloning the  automation_lab_url
+  git:
+    repo: {{ AUTOMATION_LAB_URL }}
+    dest: {{ YOUR_WORKING_DIR_NAME }}
+    clone: yes
+    update: yes
+- name: cloning the modules_url
+  git:
+    repo: {{ MODULES_URL }}
+    dest: {{ YOUR_WORKING_DIR_NAME }}
+    clone: yes
+    update: yes
+
+- name: checking if the testing working directory exists if OS is Linux
+  file:
+    path: {{ TESTING_WORKING_DIRECTORY_LINUX }}
+    state: directory
+    mode: '0755'
+  when: ansible_os_family != 'Windows'
+- name: checking if the testing working directory exists if OS is Windows
+  file:
+    path: {{ TESTING_WORKING_DIRECTORY_WINDOWS }}
+    state: directory
+    mode: '0755'
+  when: ansible_os_family == 'Windows'
+
+- name: going inside the working directory if OS is linux
+  command: chdir= {{ TESTING_WORKING_DIRECTORY_LINUX }}
+  when: ansible_os_family != 'Windows'
+- name: going inside the working directory if OS is Windows
+  command: chdir= {{ TESTING_WORKING_DIRECTORY_WINDOWS }}
+  when: ansible_os_family == 'Windows'
+
+- name: init terraform
+  shell: terraform init --backend-config="user_name={{ USER_NAME }}" \
+      --backend-config="PASSWORD={{ PASSWORD }}" \
+      --backend-config="auth_url=https://identity-3.{{ CC_REGION }}.cloud.sap/v3" \
+      --backend-config="container={{ TF_STATE_CONTAINER_NAME }}-tfstate" \
+      --backend-config="tenant_name={{ TENANT_NAME }}" \
+      --backend-config="domain_name={{ DOMAIN_NAME }}"
+
+- name: plan terraform
+  shell: terraform plan --var-file={{ TERRAFORM_VARS_FILENAME }}
+
+- name: apply terraforrm
+  shell: terraform plan --var-file={{ TERRAFORM_VARS_FILENAME }}
+...
+
+  
+

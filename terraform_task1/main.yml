@@ -40,7 +40,7 @@
   command: chdir= {{ YOUR_WORKING_DIR_NAME }}
 
 - name: check if git is installed
-  shell: terraform --version | grep "git version" 
+  shell: git --version | grep "git version" 
   register: check_git_installed
   fail: msg="git does not exist"
   when: '"git version" not in check_git_installed'
